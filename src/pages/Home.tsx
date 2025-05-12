@@ -1,5 +1,5 @@
 function Home() {
-  return <div className="text-4xl m-6">Home</div>;
+  return <div className="mt-16 text-4xl">Home</div>
 }
 
-export default Home;
+export default Home
