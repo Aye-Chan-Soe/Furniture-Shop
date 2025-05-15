@@ -24,18 +24,13 @@ export type Product = {
   status: string
 }
 
-export type Tag = {
-  name: string
-}
 export type Post = {
-  id: number
-  author: {
-    fullName: string
-  }
+  id: string
+  author: string
   title: string
   content: string
   image: string
   body: string
-  updatedAt: string
-  tags: Tag[]
+  updated_at: string
+  tags: string[]
 }

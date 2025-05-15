@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom'
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -7,22 +7,22 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu";
+} from '@/components/ui/navigation-menu'
 
-import type { MainNavItem } from "@/types";
-import { Icons } from "@/components/icons";
-import { siteConfig } from "@/config/site";
-import React from "react";
-import { cn } from "@/lib/utils";
+import type { MainNavItem } from '@/types'
+import { Icons } from '@/components/icons'
+import { siteConfig } from '@/config/site'
+import React from 'react'
+import { cn } from '@/lib/utils'
 
 interface MainNavigationProps {
-  items?: MainNavItem[];
+  items?: MainNavItem[]
 }
 
 export default function MainNavigation({ items }: MainNavigationProps) {
   return (
-    <div className="hidden lg:flex gap-1.5">
-      <Link to="/" className="items-center space-x-2 flex">
+    <div className="hidden gap-1.5 lg:flex">
+      <Link to="/" className="flex items-center space-x-2">
         <Icons.logo className="size-7" aria-hidden="true" />
         <span className="font-bold lg:inline-block">{siteConfig.name}</span>
         <span className="sr-only">Home</span>
@@ -37,14 +37,12 @@ export default function MainNavigation({ items }: MainNavigationProps) {
                   <li className="row-span-3">
                     <NavigationMenuLink asChild>
                       <Link
-                        className="flex size-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
+                        className="from-muted/50 to-muted flex size-full flex-col justify-end rounded-md bg-gradient-to-b p-6 no-underline outline-none select-none focus:shadow-md"
                         to="/"
                       >
                         <Icons.logo className="size-6" aria-hidden="true" />
-                        <div className="mb-2 mt-4 text-lg font-medium">
-                          {siteConfig.name}
-                        </div>
-                        <p className="text-sm leading-tight text-muted-foreground">
+                        <div className="mt-4 mb-2 text-lg font-medium">{siteConfig.name}</div>
+                        <p className="text-muted-foreground text-sm leading-tight">
                           {siteConfig.description}
                         </p>
                       </Link>
@@ -52,11 +50,7 @@ export default function MainNavigation({ items }: MainNavigationProps) {
                   </li>
 
                   {items[0].card.map((item) => (
-                    <ListItem
-                      key={item.title}
-                      href={item.href}
-                      title={item.title}
-                    >
+                    <ListItem key={item.title} href={item.href} title={item.title}>
                       {item.description}
                     </ListItem>
                   ))}
@@ -67,7 +61,7 @@ export default function MainNavigation({ items }: MainNavigationProps) {
 
           {items?.[0]?.menu &&
             items?.[0]?.menu?.map((item) => (
-              <NavigationMenuItem>
+              <NavigationMenuItem key={item.title}>
                 <Link to={String(item.href)}>
                   <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                     {item.title}
@@ -78,32 +72,29 @@ export default function MainNavigation({ items }: MainNavigationProps) {
         </NavigationMenuList>
       </NavigationMenu>
     </div>
-  );
+  )
 }
 
-const ListItem = React.forwardRef<
-  React.ElementRef<"a">,
-  React.ComponentPropsWithoutRef<"a">
->(({ className, title, children, href, ...props }, ref) => {
-  return (
-    <li>
-      <NavigationMenuLink asChild>
-        <Link
-          ref={ref}
-          to={String(href)}
-          className={cn(
-            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-            className
-          )}
-          {...props}
-        >
-          <div className="text-sm font-medium leading-none">{title}</div>
-          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-            {children}
-          </p>
-        </Link>
-      </NavigationMenuLink>
-    </li>
-  );
-});
-ListItem.displayName = "ListItem";
+const ListItem = React.forwardRef<React.ElementRef<'a'>, React.ComponentPropsWithoutRef<'a'>>(
+  ({ className, title, children, href, ...props }, ref) => {
+    return (
+      <li>
+        <NavigationMenuLink asChild>
+          <Link
+            ref={ref}
+            to={String(href)}
+            className={cn(
+              'hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground block space-y-1 rounded-md p-3 leading-none no-underline transition-colors outline-none select-none',
+              className,
+            )}
+            {...props}
+          >
+            <div className="text-sm leading-none font-medium">{title}</div>
+            <p className="text-muted-foreground line-clamp-2 text-sm leading-snug">{children}</p>
+          </Link>
+        </NavigationMenuLink>
+      </li>
+    )
+  },
+)
+ListItem.displayName = 'ListItem'
