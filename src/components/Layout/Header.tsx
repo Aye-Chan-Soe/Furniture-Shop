@@ -4,6 +4,7 @@ import { siteConfig } from '@/config/site'
 import { ModeToggle } from '@/components/mode-toggle'
 import AuthDropDown from './AuthDropDown'
 import { User } from '@/data/user'
+import CartSheet from '@/components/Layout/CartSheet'
 
 function Header() {
   return (
@@ -12,6 +13,7 @@ function Header() {
         <MainNavigation items={siteConfig.mainNav} />
         <MobileNavigation items={siteConfig.mainNav} />
         <div className="item-center mr-8 flex flex-1 justify-end space-x-4 lg:mr-0">
+          <CartSheet />
           <ModeToggle />
           <AuthDropDown user={User} />
         </div>
