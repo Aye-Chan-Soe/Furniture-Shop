@@ -1,6 +1,0 @@
-[33m08dc7ec[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m HEAD@{0}: reset: moving to HEAD~1
-[33mb05bcb7[m HEAD@{1}: reset: moving to HEAD~1
-[33m34375f5[m[33m ([m[1;31morigin/main[m[33m)[m HEAD@{2}: commit: fixed small error
-[33mb05bcb7[m HEAD@{3}: commit: Footer Finished
-[33m08dc7ec[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m HEAD@{4}: Branch: renamed refs/heads/master to refs/heads/main
-[33m08dc7ec[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m HEAD@{6}: commit (initial): Desktop nav done
