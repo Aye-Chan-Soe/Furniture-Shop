@@ -127,12 +127,11 @@ export const auth = (req: CustomRequest, res: Response, next: NextFunction) => {
   };
 
   if (!accessToken) {
+    generateNewToken(); // await generateNewToken();
     // const error: any = new Error("Access Token has expired.");
     // error.status = 401;
     // error.code = errorCode.accessTokenExpired;
     // return next(error);
-
-    generateNewToken(); // Generate new token if accessToken is not present
   } else {
     // Verify the accessToken
     let decoded;
@@ -156,10 +155,10 @@ export const auth = (req: CustomRequest, res: Response, next: NextFunction) => {
       next();
     } catch (error: any) {
       if (error.name === "TokenExpiredError") {
+        generateNewToken(); // await generateNewToken();
         // error.message = "Access token has expired.";
         // error.status = 401;
         // error.code = errorCode.accessTokenExpired;
-        generateNewToken();
       } else {
         return next(
           createError("Invalid access token.", 400, errorCode.attack)
