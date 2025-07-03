@@ -8,7 +8,7 @@ import i18next from "i18next";
 import Backend from "i18next-fs-backend";
 import middleware from "i18next-http-middleware";
 import path from "path";
-
+// import cron from "node-cron";
 import { limiter } from "./middlewares/rateLimiter";
 import routes from "./routes/v1/";
 
@@ -66,6 +66,8 @@ i18next
 app.use(middleware.handle(i18next));
 
 app.use(express.static("public"));
+app.use(express.static("uploads")); // For public access
+
 app.use(routes); // API routes
 
 // Error handler middleware
@@ -78,3 +80,14 @@ app.use((error: any, req: Request, res: Response, next: NextFunction) => {
     errorCode,
   });
 });
+
+// CRON Job
+// cron.schedule("* * * * *", async () => {
+//   console.log("Cron job running every minute for testing purposes");
+//   // don't run any heavy tasks here
+//   const setting = await getSettingStatus("maintenance");
+//   if (setting?.value === "true") {
+//     await createOrUpdateSettingStatus("maintenance", "false");
+//     console.log("Maintenance mode disabled");
+//   }
+// });

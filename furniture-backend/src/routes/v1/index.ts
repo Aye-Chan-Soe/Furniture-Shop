@@ -12,7 +12,7 @@ import { maintenance } from "../../middlewares/maintenance";
 const router = express.Router();
 
 router.use("/api/v1", authRoutes);
-router.use("/api/v1/user", auth, userRoutes); // Profile routes
+router.use("/api/v1/users", auth, userRoutes); // Profile routes
 router.use("/api/v1/admins", auth, authorise(true, "ADMIN"), adminRoutes); // Admin user routes
 
 // FOR MAINTENANCE MODE
