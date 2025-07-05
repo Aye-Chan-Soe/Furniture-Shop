@@ -9,6 +9,7 @@ import { checkUserIfNotExist } from "../../utils/auth";
 import { getUserById, updateUser } from "../../services/authService";
 import { authorise } from "../../utils/authorise";
 import { checkUploadFile } from "../../utils/check";
+import ImageQueue from "../../jobs/queues/imageQueue";
 
 interface CustomRequest extends Request {
   userId?: number;
@@ -128,44 +129,75 @@ export const uploadProfileOptimize = async (
   checkUserIfNotExist(user);
   checkUploadFile(image);
 
-  const fileName = Date.now() + "-" + `${Math.round(Math.random() * 1e9)}.webp`;
+  const splitFileName = req.file?.filename.split(".")[0];
 
-  try {
-    const optimizedImagePath = path.join(
-      __dirname,
-      "../../..",
-      "/uploads/images",
-      fileName
-    );
-    await sharp(req.file?.buffer)
-      .resize(200, 200)
-      .webp({ quality: 50 })
-      .toFile(optimizedImagePath);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Image optimization failed." });
-    return;
-  }
+  const job = await ImageQueue.add(
+    "optimize-image",
+    {
+      filePath: req.file?.path,
+      fileName: `${splitFileName}.webp`,
+      width: 200,
+      height: 200,
+      quality: 50,
+    },
+    {
+      attempts: 3,
+      backoff: {
+        type: "exponential",
+        delay: 1000,
+      },
+    }
+  );
+
+  // try {
+  //   const optimizedImagePath = path.join(
+  //     __dirname,
+  //     "../../..",
+  //     "/uploads/images",
+  //     fileName
+  //   );
+  //   await sharp(req.file?.buffer)
+  //     .resize(200, 200)
+  //     .webp({ quality: 50 })
+  //     .toFile(optimizedImagePath);
+  // } catch (error) {
+  //   console.error(error);
+  //   res.status(500).json({ message: "Image optimization failed." });
+  //   return;
+  // }
 
   if (user?.image) {
-    // If user already has an image, delete the old image file
     try {
-      const filePath = path.join(
+      const originalFilePath = path.join(
+        __dirname,
+        "../../..",
+        "/uploads/images",
+        user!.image!
+      );
+      const optimizedFilePath = path.join(
         __dirname,
         "../../..",
         "/uploads/optimize",
         user!.image!.split(".")[0] + ".webp"
       );
-      await unlink(filePath);
+
+      await unlink(originalFilePath);
+      await unlink(optimizedFilePath);
     } catch (error) {
       console.log(error);
     }
   }
 
   const userData = {
-    image: req.file?.filename,
+    image: req.file.fileName,
   };
   await updateUser(user?.id!, userData);
+
+  res.status(200).json({
+    message: "Profile picture uploaded successfully.",
+    image: splitFileName + ".webp",
+    jobId: job.id,
+  });
 };
 
 // Just for testing

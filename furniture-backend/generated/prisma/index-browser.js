@@ -182,16 +182,14 @@ exports.Prisma.ProductOnOrderScalarFieldEnum = {
   price: 'price'
 };
 
-exports.Prisma.TagScalarFieldEnum = {
+exports.Prisma.PostTagScalarFieldEnum = {
   id: 'id',
   name: 'name'
 };
 
-exports.Prisma.TaggableScalarFieldEnum = {
+exports.Prisma.ProductTagScalarFieldEnum = {
   id: 'id',
-  tagId: 'tagId',
-  type: 'type',
-  typeId: 'typeId'
+  name: 'name'
 };
 
 exports.Prisma.TypeScalarFieldEnum = {
@@ -261,8 +259,8 @@ exports.Prisma.ModelName = {
   Post: 'Post',
   Product: 'Product',
   ProductOnOrder: 'ProductOnOrder',
-  Tag: 'Tag',
-  Taggable: 'Taggable',
+  PostTag: 'PostTag',
+  ProductTag: 'ProductTag',
   Type: 'Type',
   User: 'User',
   image: 'image',

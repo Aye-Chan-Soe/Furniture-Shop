@@ -18,7 +18,7 @@ router.patch("/profile/upload", auth, upload.single("Avatar"), uploadProfile);
 router.patch(
   "/profile/upload/optimize",
   auth,
-  uploadMemory.single("Avatar"),
+  upload.single("Avatar"),
   uploadProfileOptimize
 );
 
