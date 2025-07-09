@@ -12,6 +12,7 @@ import upload, { uploadMemory } from "../../../middlewares/uploadFile";
 import {
   getPost,
   getPostsByPagination,
+  getInfinitePostsByPagination,
 } from "../../../controllers/api/postController";
 
 const router = express.Router();
@@ -36,6 +37,7 @@ router.patch(
 router.get("/profile/my-photo", getMyPhoto); // Just for testing
 
 router.get("/posts", auth, getPostsByPagination);
+router.get("/posts/infinite", auth, getInfinitePostsByPagination);
 router.get("/posts/:id", auth, getPost);
 
 export default router;
