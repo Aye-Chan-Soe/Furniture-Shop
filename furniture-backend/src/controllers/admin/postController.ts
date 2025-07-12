@@ -4,23 +4,24 @@ import sanitizeHtml from "sanitize-html";
 import path from "path";
 import { unlink } from "node:fs/promises";
 
-import { errorCode } from "../../../../config/errorCode";
-import { checkUserIfNotExist } from "../../../utils/auth";
-import { checkModelIfExist, checkUploadFile } from "../../../utils/check";
-import { createError } from "../../../utils/error";
-import { getUserById } from "../../../services/authService";
-import ImageQueue from "../../../jobs/queues/imageQueue";
+import { errorCode } from "../../../config/errorCode";
+import { checkUserIfNotExist } from "../../utils/auth";
+import { checkModelIfExist, checkUploadFile } from "../../utils/check";
+import { createError } from "../../utils/error";
+import { getUserById } from "../../services/authService";
+import ImageQueue from "../../jobs/queues/imageQueue";
 import {
   createOnePost,
   deleteOnePost,
   getPostById,
   PostArgs,
   updateOnePost,
-} from "../../../services/postService";
-import cacheQueue from "../../../jobs/queues/cacheQueue";
+} from "../../services/postService";
+import cacheQueue from "../../jobs/queues/cacheQueue";
 
 interface CustomRequest extends Request {
   userId?: number;
+  user?: any;
 }
 
 const removeFiles = async (
@@ -30,7 +31,7 @@ const removeFiles = async (
   try {
     const originalFilePath = path.join(
       __dirname,
-      "../../../..",
+      "../../..",
       "/uploads/images",
       originalFile
     );
@@ -41,7 +42,7 @@ const removeFiles = async (
     if (optimizedFile) {
       const optimizedFilePath = path.join(
         __dirname,
-        "../../../..",
+        "../../..",
         "/uploads/optimize",
         optimizedFile
       );
@@ -83,21 +84,21 @@ export const createPost = [
     }
 
     const { title, content, body, category, type, tags } = req.body;
-    const userId = req.userId;
+    const user = req.user;
     checkUploadFile(req.file);
-    const user = await getUserById(userId!);
-    if (!user) {
-      if (req.file) {
-        await removeFiles(req.file.filename, null);
-      }
-      return next(
-        createError(
-          "This user has not registered",
-          401,
-          errorCode.unauthenticated
-        )
-      );
-    }
+    // const user = await getUserById(userId!);
+    // if (!user) {
+    //   if (req.file) {
+    //     await removeFiles(req.file.filename, null);
+    //   }
+    //   return next(
+    //     createError(
+    //       "This user has not registered",
+    //       401,
+    //       errorCode.unauthenticated
+    //     )
+    //   );
+    // }
     const splitFileName = req.file?.filename.split(".")[0];
 
     await ImageQueue.add(
@@ -174,22 +175,22 @@ export const updatePost = [
     }
 
     const { postId, title, content, body, category, type, tags } = req.body;
-    const userId = req.userId;
+    const user = req.user;
 
-    const user = await getUserById(userId!);
-    if (!user) {
-      if (req.file) {
-        await removeFiles(req.file.filename, null);
-      }
+    // const user = await getUserById(userId!);
+    // if (!user) {
+    //   if (req.file) {
+    //     await removeFiles(req.file.filename, null);
+    //   }
 
-      return next(
-        createError(
-          "This user has not registered.",
-          401,
-          errorCode.unauthenticated
-        )
-      );
-    }
+    //   return next(
+    //     createError(
+    //       "This user has not registered.",
+    //       401,
+    //       errorCode.unauthenticated
+    //     )
+    //   );
+    // }
 
     const post = await getPostById(+postId); // "8" -> 8
     if (!post) {
@@ -276,9 +277,9 @@ export const deletePost = [
 
     const { postId } = req.body;
 
-    const userId = req.userId;
-    const user = await getUserById(userId!);
-    checkUserIfNotExist(user);
+    const user = req.user;
+    // const user = await getUserById(userId!);
+    // checkUserIfNotExist(user);
 
     const post = await getPostById(+postId);
     checkModelIfExist(post);
