@@ -17,6 +17,7 @@ import {
   PostArgs,
   updateOnePost,
 } from "../../../services/postService";
+import cacheQueue from "../../../jobs/queues/cacheQueue";
 
 interface CustomRequest extends Request {
   userId?: number;
@@ -129,6 +130,12 @@ export const createPost = [
     };
 
     const post = await createOnePost(data);
+
+    await cacheQueue.add(
+      "invalidate-post-cache",
+      { pattern: "posts:*" },
+      { jobId: `invalidate-${Date.now()}`, priority: 1 }
+    );
 
     res.status(201).json({
       message: "Successfully created a new post.",
@@ -246,6 +253,12 @@ export const updatePost = [
 
     const postUpdated = await updateOnePost(post.id, data);
 
+    await cacheQueue.add(
+      "invalidate-post-cache",
+      { pattern: "posts:*" },
+      { jobId: `invalidate-${Date.now()}`, priority: 1 }
+    );
+
     res.status(200).json({
       message: "Successfully updated the post",
       postId: postUpdated.id,
@@ -283,6 +296,12 @@ export const deletePost = [
     const postDeleted = await deleteOnePost(post!.id);
     const optimizedFile = post!.image.split(".")[0] + ".webp";
     await removeFiles(post!.image, optimizedFile);
+
+    await cacheQueue.add(
+      "invalidate-post-cache",
+      { pattern: "posts:*" },
+      { jobId: `invalidate-${Date.now()}`, priority: 1 }
+    );
 
     res.status(200).json({
       message: "Successfully deleted the post",
