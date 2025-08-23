@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { body, query, validationResult, param } from "express-validator";
 import { errorCode } from "../../../config/errorCode";
 import { checkUserIfNotExist } from "../../utils/auth";
-import { checkUploadFile } from "../../utils/check";
+import { checkModelIfExist, checkUploadFile } from "../../utils/check";
 import { createError } from "../../utils/error";
 import { getUserById } from "../../services/authService";
 import {
@@ -35,6 +35,8 @@ export const getPost = [
     const post = await getOrSetCache(cacheKey, async () => {
       return await getPostWithRelations(+postId);
     });
+
+    checkModelIfExist(post);
 
     // const modifiedPost = {
     //   id: post!.id,

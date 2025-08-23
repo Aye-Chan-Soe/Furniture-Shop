@@ -292,12 +292,14 @@ export const confirmPassword = [
         secure: process.env.NODE_ENV === "production", // true in production
         sameSite: process.env.NODE_ENV === "production" ? "none" : "strict", // "none" for cross-site cookies in production
         maxAge: 60 * 15 * 1000, // 15 minutes
+        path: "/",
       })
       .cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production", // true in production
         sameSite: process.env.NODE_ENV === "production" ? "none" : "strict", // "none" for cross-site cookies in production
         maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        path: "/",
       })
       .status(201)
       .json({
@@ -405,12 +407,14 @@ export const login = [
         secure: process.env.NODE_ENV === "production", // true in production
         sameSite: process.env.NODE_ENV === "production" ? "none" : "strict", // "none" for cross-site cookies in production
         maxAge: 60 * 15 * 1000, // 15 minutes
+        path: "/",
       })
       .cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production", // true in production
         sameSite: process.env.NODE_ENV === "production" ? "none" : "strict", // "none" for cross-site cookies in production
         maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        path: "/",
       })
       .status(200)
       .json({
@@ -489,11 +493,13 @@ export const logout = [
         httpOnly: true,
         secure: process.env.NODE_ENV === "production", // true in production
         sameSite: process.env.NODE_ENV === "production" ? "none" : "strict", // "none" for cross-site cookies in production
+        path: "/",
       })
       .clearCookie("refreshToken", {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production", // true in production
         sameSite: process.env.NODE_ENV === "production" ? "none" : "strict", // "none" for cross-site cookies in production
+        path: "/",
       })
       .status(200)
       .json({
