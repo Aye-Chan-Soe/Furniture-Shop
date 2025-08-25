@@ -24,7 +24,6 @@ const emailSchema = z.object({
 
 export default function NewsLetterForm() {
   const [loading, setLoading] = useState(false)
-  // 1. Define your form.
   const form = useForm<z.infer<typeof emailSchema>>({
     resolver: zodResolver(emailSchema),
     defaultValues: {
@@ -32,13 +31,9 @@ export default function NewsLetterForm() {
     },
   })
 
-  // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof emailSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
     console.log(values)
     setLoading(true)
-    //Call APi
   }
 
   return (

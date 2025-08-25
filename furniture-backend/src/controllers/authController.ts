@@ -373,7 +373,7 @@ export const login = [
       }
       // -----Ending to record wrong password attempts-----
 
-      return next(createError("wrongPasswd", 401, errorCode.invalid));
+      return next(createError("Password is wrong!", 401, errorCode.invalid));
     }
 
     // Autharization Token
@@ -781,25 +781,23 @@ export const resetPassword = [
   },
 ];
 
-// interface CustomRequest extends Request {
-//   userId?: number;
-// }
+interface CustomRequest extends Request {
+  userId?: number;
+}
 
-// export const authCheck = async (
-//   req: CustomRequest,
-//   res: Response,
-//   next: NextFunction
-// ) => {
-//   const userId = req.userId;
-//   const user = await getUserById(userId!);
-//   checkUserIfNotExist(user);
+export const authCheck = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const userId = req.userId;
+  const user = await getUserById(userId!);
+  checkUserIfNotExist(user);
 
-//   res
-//     .status(200)
-//     .json({
-//       message: "You are authenticated.",
-//       userId: user?.id,
-//       username: user?.firstName + " " + user?.lastLogin,
-//       image: user?.image,
-//     });
-// };
+  res.status(200).json({
+    message: "You are authenticated.",
+    userId: user?.id,
+    username: user?.firstName + " " + user?.lastLogin,
+    image: user?.image,
+  });
+};
