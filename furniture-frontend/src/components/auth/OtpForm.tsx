@@ -39,7 +39,7 @@ export function InputOTPForm({ className, ...props }: React.ComponentProps<'div'
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     console.log(data)
-    submit(data, { method: 'POST', action: 'register/otp' })
+    submit(data, { method: 'POST', action: '/register/otp' })
   }
 
   return (

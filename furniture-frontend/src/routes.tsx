@@ -17,8 +17,14 @@ import ProductDetail from './pages/products/ProductDetail'
 import LoginPage from './pages/auth/Login'
 import AuthRootLayout from './pages/auth/AuthRootLayout'
 
-import { homeLoader, loginLoader } from '@/router/loader'
-import { loginAction, logoutAction, registerAction } from './router/action'
+import { confirmLoader, homeLoader, loginLoader, otpLoader } from '@/router/loader'
+import {
+  confirmAction,
+  loginAction,
+  logoutAction,
+  otpAction,
+  registerAction,
+} from './router/action'
 import SignUpPage from './pages/auth/SignUp'
 import OtpPage from './pages/auth/Otp'
 import ConfirmPasswordPage from './pages/auth/ConfirmPassword'
@@ -96,8 +102,13 @@ export const router = createBrowserRouter([
     Component: AuthRootLayout,
     children: [
       { index: true, Component: SignUpPage, loader: loginLoader, action: registerAction },
-      { path: 'otp', Component: OtpPage },
-      { path: 'confirm-password', Component: ConfirmPasswordPage },
+      { path: 'otp', Component: OtpPage, loader: otpLoader, action: otpAction },
+      {
+        path: 'confirm-password',
+        Component: ConfirmPasswordPage,
+        loader: confirmLoader,
+        action: confirmAction,
+      },
     ],
   },
   { path: '/logout', action: logoutAction, loader: () => redirect('/') },

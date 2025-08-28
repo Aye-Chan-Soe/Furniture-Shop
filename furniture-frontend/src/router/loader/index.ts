@@ -1,4 +1,5 @@
 import api, { authApi } from '@/api'
+import useAuthStore, { Status } from '@/store/authStore'
 import { redirect } from 'react-router-dom'
 
 export const homeLoader = async () => {
@@ -20,4 +21,22 @@ export const loginLoader = async () => {
   } catch (error) {
     console.error('Loader error:', error)
   }
+}
+
+export const otpLoader = async () => {
+  const authStore = useAuthStore.getState()
+
+  if (authStore.status !== Status.otp) {
+    return redirect('/register')
+  }
+  return null
+}
+
+export const confirmLoader = async () => {
+  const authStore = useAuthStore.getState()
+
+  if (authStore.status !== Status.confirm) {
+    return redirect('/register')
+  }
+  return null
 }

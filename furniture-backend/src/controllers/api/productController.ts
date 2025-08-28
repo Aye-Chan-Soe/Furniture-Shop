@@ -126,13 +126,14 @@ export const getProductsByPagination = [
       products.pop();
     }
 
-    const newCursor =
+    const nextCursor =
       products.length > 0 ? products[products.length - 1].id : null;
 
     res.status(200).json({
       message: "Get All infinite products.",
       hasNextPage,
-      newCursor,
+      nextCursor,
+      prevCursor: lastCursor,
       products,
     });
   },
