@@ -1,16 +1,14 @@
+import { Link, useLoaderData } from 'react-router-dom'
+
 import { Button } from '@/components/ui/button'
-import { Link } from 'react-router-dom'
 import Couch from '@/data/images/couch.png'
 import CarouselCard from '@/components/products/CarouselCard'
-import { products } from '@/data/products'
-import { posts } from '@/data/posts'
 import BlogCard from '@/components/blogs/BlogCard'
 import ProductCard from '@/components/products/ProductCard'
-
-const samplePost = posts.slice(0, 3)
-const sampleProduct = products.slice(0, 4)
+import { Product } from '@/types'
 
 function Home() {
+  const { productsData, postsData } = useLoaderData()
   const Title = ({ title, href, sideText }: { title: string; href: string; sideText: string }) => (
     <div className="mt-28 mb-10 flex flex-col px-4 md:flex-row md:justify-between md:px-0">
       <h2 className="mb-4 text-2xl font-bold md:mb-0">{title}</h2>
@@ -51,17 +49,17 @@ function Home() {
         {/* Image Section */}
         <img src={Couch} alt="Couch" className="w-full lg:w-3/5" />
       </div>
-      <CarouselCard products={products} />
+      <CarouselCard products={productsData.products} />
       {/* const Title = .... */}
       <Title title="Feature Product" href="/products" sideText="View All Products" />
       <div className="grid grid-cols-1 gap-6 px-4 md:grid-cols-2 md:px-0 lg:grid-cols-4">
-        {sampleProduct.map((product) => (
+        {productsData.products.slice(0, 4).map((product: Product) => (
           <ProductCard product={product} key={product.id} />
         ))}
       </div>
 
       <Title title="Recent Blog" href="/blogs" sideText="View All Posts" />
-      <BlogCard posts={samplePost} />
+      <BlogCard posts={postsData.posts} />
     </div>
   )
 }

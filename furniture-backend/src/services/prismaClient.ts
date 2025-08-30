@@ -18,7 +18,7 @@ export const prisma = new PrismaClient().$extends({
         },
         compute(user) {
           if (user.image) {
-            return "/optimize" + user.image.split(".")[0] + ".webp";
+            return "/optimize/" + user.image.split(".")[0] + ".webp";
           }
           return user.image;
         },
@@ -30,7 +30,7 @@ export const prisma = new PrismaClient().$extends({
           image: true,
         },
         compute(post) {
-          return "/optimize" + post.image.split(".")[0] + ".webp";
+          return "/optimize/" + post.image.split(".")[0] + ".webp";
         },
       },
       updatedAt: {
@@ -52,7 +52,7 @@ export const prisma = new PrismaClient().$extends({
           path: true,
         },
         compute(image) {
-          return "/optimize" + image.path.split(".")[0] + ".webp";
+          return "/optimize/" + image.path.split(".")[0] + ".webp";
         },
       },
     },

@@ -4,8 +4,16 @@ import { redirect } from 'react-router-dom'
 
 export const homeLoader = async () => {
   try {
-    const response = await api.get('users/products')
-    return response.data
+    const products = await api.get('users/products?limit=8')
+    const posts = await api.get('users/posts/infinite?cursor=3')
+
+    // Not good if refresh token expired
+    // const [products, posts] = await Promise.all([
+    //   api.get('users/products?limit=8'),
+    //   api.get('users/posts/infinite?cursor=3')
+    // ])
+
+    return { productsData: products.data, postsData: posts.data }
   } catch (error) {
     console.error('Failed to load home data', error)
   }

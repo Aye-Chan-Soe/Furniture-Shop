@@ -17,6 +17,8 @@ interface ProductProps {
   product: Product
   className?: string
 }
+
+const imageUrl = import.meta.env.VITE_IMG_URL
 function ProductCard({ product, className }: ProductProps) {
   return (
     <Card className={cn('size-full overflow-hidden rounded-lg', className)}>
@@ -24,10 +26,11 @@ function ProductCard({ product, className }: ProductProps) {
         <CardHeader className="border-b p-0">
           <AspectRatio ratio={1 / 1} className="bg-muted">
             <img
-              src={product.images[0]}
+              src={imageUrl + product.images[0].path}
               alt="product image"
               className="size-full object-cover"
               loading="lazy"
+              decoding="async"
             />
           </AspectRatio>
         </CardHeader>

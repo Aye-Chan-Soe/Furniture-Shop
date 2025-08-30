@@ -195,7 +195,7 @@ export const uploadProfileOptimize = async (
 
   res.status(200).json({
     message: "Profile picture uploaded successfully.",
-    image: splitFileName + ".webp",
+    image: `${splitFileName}` + ".webp",
     jobId: job.id,
   });
 };
