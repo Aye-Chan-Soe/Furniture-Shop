@@ -1,4 +1,4 @@
-import { QueryClient, keepPreviousData } from '@tanstack/react-query'
+import { QueryClient } from '@tanstack/react-query'
 import api from '.'
 
 export const queryClient = new QueryClient({
@@ -21,11 +21,11 @@ const fetchProducts = (q?: string) => api.get(`users/products${q ?? ''}`).then((
 // useMutation => CREATE,UPDATE, DELETE
 export const productQuery = (q?: string) => ({
   queryKey: ['products', q], // ?limit=8, ?limit=4 || querykey for caching
-  queryFn: fetchProducts, // queryFn for api call function
+  queryFn: () => fetchProducts(q), // queryFn for api call function
 })
 
 const fetchPosts = (q?: string) => api.get(`users/posts/infinite${q ?? ''}`).then((res) => res.data)
-export const queryPosts = (q?: string) => ({
+export const postQuery = (q?: string) => ({
   queryKey: ['posts', q],
-  queryFn: fetchPosts,
+  queryFn: () => fetchPosts(q),
 })
