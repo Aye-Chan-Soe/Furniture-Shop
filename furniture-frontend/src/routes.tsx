@@ -17,7 +17,14 @@ import ProductDetail from './pages/products/ProductDetail'
 import LoginPage from './pages/auth/Login'
 import AuthRootLayout from './pages/auth/AuthRootLayout'
 
-import { confirmLoader, homeLoader, loginLoader, otpLoader } from '@/router/loader'
+import {
+  blogInfiniteLoader,
+  confirmLoader,
+  homeLoader,
+  loginLoader,
+  otpLoader,
+  postLoader,
+} from '@/router/loader'
 import {
   confirmAction,
   loginAction,
@@ -56,6 +63,7 @@ export const router = createBrowserRouter([
                 <BlogPage />
               </Suspense>
             ),
+            loader: blogInfiniteLoader,
           },
           {
             path: ':postId',
@@ -64,6 +72,7 @@ export const router = createBrowserRouter([
                 <BlogDetail />
               </Suspense>
             ),
+            loader: postLoader,
           },
         ],
       },

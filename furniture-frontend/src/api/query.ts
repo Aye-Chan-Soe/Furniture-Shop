@@ -29,3 +29,35 @@ export const postQuery = (q?: string) => ({
   queryKey: ['posts', q],
   queryFn: () => fetchPosts(q),
 })
+
+// For Infinite Scroll
+const fetchInfinitePosts = async ({ pageParam = null }) => {
+  const query = pageParam ? `?limit=6&cursor=${pageParam}` : '?limit=6'
+  const response = await api.get(`users/posts/infinite${query}`)
+  return response.data
+}
+
+export const postInfiniteQuery = () => ({
+  queryKey: ['posts', 'infinite'],
+  queryFn: fetchInfinitePosts,
+  initialPageParam: null, // Start with no cursor
+  getNextPageParam: (lastPage: { nextCursor: any }, pages: any) => lastPage.nextCursor ?? undefined,
+  // getPreviousPageParam: (firstPage, pages) => firstPage.prevCursor ?? undefined
+  // maxPages: 6
+})
+
+export const fetchOnePost = async (id: number) => {
+  const post = await api.get(`users/posts/${id}`)
+  if (!post) {
+    throw new Response('', {
+      status: 404,
+      statusText: 'Not Found',
+    })
+  }
+  return post.data
+}
+
+export const onePostQuery = (id: number) => ({
+  queryKey: ['posts', 'details', id],
+  queryFn: () => fetchOnePost(id),
+})

@@ -1,7 +1,7 @@
 import { authApi } from '@/api'
-import { postQuery, productQuery, queryClient } from '@/api/query'
+import { onePostQuery, postInfiniteQuery, postQuery, productQuery, queryClient } from '@/api/query'
 import useAuthStore, { Status } from '@/store/authStore'
-import { redirect } from 'react-router-dom'
+import { redirect, LoaderFunctionArgs } from 'react-router-dom'
 
 // export const homeLoader = async () => {
 //   try {
@@ -54,4 +54,18 @@ export const confirmLoader = async () => {
     return redirect('/register')
   }
   return null
+}
+
+export const blogInfiniteLoader = async () => {
+  await queryClient.ensureInfiniteQueryData(postInfiniteQuery())
+  return null
+}
+
+export const postLoader = async ({ params }: LoaderFunctionArgs) => {
+  if (!params.postId) {
+    throw new Error('No Post ID provided')
+  }
+  await queryClient.ensureQueryData(postQuery('?limit=6'))
+  await queryClient.ensureQueryData(onePostQuery(Number(params.postId)))
+  return { postId: params.postId }
 }
