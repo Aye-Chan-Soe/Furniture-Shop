@@ -14,29 +14,45 @@ import {
 import type { Category } from '@/types'
 
 interface FilterProps {
-  filterList: { categories: Category[]; types: Category[] }
+  categories: Category[]
+  types: Category[]
+}
+
+interface ProductFilterProps {
+  filterList: FilterProps
+  selectedCategory: string[]
+  selectedType: string[]
+  onFilterChange: (category: string[], type: string[]) => void
 }
 
 const FormSchema = z.object({
-  categories: z.array(z.string()).refine((value) => value.some((item) => item), {
-    message: 'You have to select at least one category.',
-  }),
-  types: z.array(z.string()).refine((value) => value.some((item) => item), {
-    message: 'You have to select at least one type.',
-  }),
+  categories: z.array(z.string()),
+  // .refine((value) => value.some((item) => item), {
+  //   message: 'You have to select at least one category.',
+  // }),
+  types: z.array(z.string()),
+  // .refine((value) => value.some((item) => item), {
+  //   message: 'You have to select at least one type.',
+  // }),
 })
 
-function ProductFilter({ filterList }: FilterProps) {
+function ProductFilter({
+  filterList,
+  selectedCategory,
+  selectedType,
+  onFilterChange,
+}: ProductFilterProps) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      categories: [],
-      types: [],
+      categories: selectedCategory,
+      types: selectedType,
     },
   })
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log('Selected items:', data.categories)
+    //console.log('Selected items:', data.categories)
+    onFilterChange(data.categories, data.types)
   }
 
   return (
@@ -63,15 +79,17 @@ function ProductFilter({ filterList }: FilterProps) {
                       >
                         <FormControl>
                           <Checkbox
-                            checked={field.value?.includes(item.id)}
+                            checked={field.value?.includes(item.id.toString())}
                             onCheckedChange={(checked) => {
                               return checked
-                                ? field.onChange([...field.value, item.id])
-                                : field.onChange(field.value?.filter((value) => value !== item.id))
+                                ? field.onChange([...field.value, item.id.toString()])
+                                : field.onChange(
+                                    field.value?.filter((value) => value !== item.id.toString()),
+                                  )
                             }}
                           />
                         </FormControl>
-                        <FormLabel className="text-sm font-normal">{item.label}</FormLabel>
+                        <FormLabel className="text-sm font-normal">{item.name}</FormLabel>
                       </FormItem>
                     )
                   }}
@@ -102,15 +120,17 @@ function ProductFilter({ filterList }: FilterProps) {
                       >
                         <FormControl>
                           <Checkbox
-                            checked={field.value?.includes(item.id)}
+                            checked={field.value?.includes(item.id.toString())}
                             onCheckedChange={(checked) => {
                               return checked
-                                ? field.onChange([...field.value, item.id])
-                                : field.onChange(field.value?.filter((value) => value !== item.id))
+                                ? field.onChange([...field.value, item.id.toString()])
+                                : field.onChange(
+                                    field.value?.filter((value) => value !== item.id.toString()),
+                                  )
                             }}
                           />
                         </FormControl>
-                        <FormLabel className="text-sm font-normal">{item.label}</FormLabel>
+                        <FormLabel className="text-sm font-normal">{item.name}</FormLabel>
                       </FormItem>
                     )
                   }}

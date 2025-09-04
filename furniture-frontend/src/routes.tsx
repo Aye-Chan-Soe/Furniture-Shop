@@ -24,6 +24,7 @@ import {
   loginLoader,
   otpLoader,
   postLoader,
+  productInfiniteLoader,
 } from '@/router/loader'
 import {
   confirmAction,
@@ -91,6 +92,7 @@ export const router = createBrowserRouter([
                 <ProductPage />
               </Suspense>
             ),
+            loader: productInfiniteLoader,
           },
           {
             path: ':productId',

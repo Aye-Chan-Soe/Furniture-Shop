@@ -28,7 +28,7 @@ export default function Blog() {
     <div className="container mx-auto">
       <h1 className="mt-8 text-center text-2xl font-bold md:text-left">Latest Blog Posts</h1>
       <BlogPostList posts={allPosts} />
-      <div className="my-4 justify-center">
+      <div className="my-4 flex justify-center">
         <Button
           onClick={() => fetchNextPage()}
           disabled={!hasNextPage || isFetchingNextPage}

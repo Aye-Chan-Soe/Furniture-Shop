@@ -1,4 +1,4 @@
-import { QueryClient } from '@tanstack/react-query'
+import { QueryClient, keepPreviousData } from '@tanstack/react-query'
 import api from '.'
 
 export const queryClient = new QueryClient({
@@ -41,7 +41,7 @@ export const postInfiniteQuery = () => ({
   queryKey: ['posts', 'infinite'],
   queryFn: fetchInfinitePosts,
   initialPageParam: null, // Start with no cursor
-  getNextPageParam: (lastPage: { nextCursor: any }, pages: any) => lastPage.nextCursor ?? undefined,
+  getNextPageParam: (lastPage, pages) => lastPage.nextCursor ?? undefined,
   // getPreviousPageParam: (firstPage, pages) => firstPage.prevCursor ?? undefined
   // maxPages: 6
 })
@@ -60,4 +60,42 @@ export const fetchOnePost = async (id: number) => {
 export const onePostQuery = (id: number) => ({
   queryKey: ['posts', 'details', id],
   queryFn: () => fetchOnePost(id),
+})
+
+export const fetchCategoryType = async () => api.get('users/filter-type').then((res) => res.data)
+
+export const categotyTypeQuery = () => ({
+  queryKey: ['categot', 'type'],
+  queryFn: fetchCategoryType,
+})
+
+const fetchInfiniteProducts = async ({
+  pageParam = null,
+  categories = null,
+  types = null,
+}: {
+  pageParam?: number | null
+  categories?: string | null
+  types?: string | null
+}) => {
+  let query = pageParam ? `?limit=9&cursor=${pageParam}` : '?limit=9'
+  if (categories) query += `&category=${categories}`
+  if (types) query += `&type=${types}`
+
+  const response = await api.get(`users/products${query}`)
+  return response.data
+}
+
+export const productInfiniteQuery = (
+  categories: string | null = null,
+  types: string | null = null,
+) => ({
+  queryKey: ['product', 'infinite', categories ?? undefined, types ?? undefined],
+  queryFn: ({ pageParam }: { pageParam?: number | null }) =>
+    fetchInfiniteProducts({ pageParam, categories, types }),
+  placeholderData: keepPreviousData,
+  initialPageParam: null,
+  getNextPageParam: (lastPage, pages) => lastPage.nextCursor ?? undefined,
+  // getPreviousPageParam: (firstPage, pages) => firstPage.prevCursor ?? undefined
+  // maxPages: 6
 })

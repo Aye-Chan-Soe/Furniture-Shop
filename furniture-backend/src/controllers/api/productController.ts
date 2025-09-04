@@ -8,8 +8,10 @@ import { getUserById } from "../../services/authService";
 
 import { getOrSetCache } from "../../utils/cache";
 import {
+  getCategoryList,
   getProductWithRelations,
   getProductsList,
+  getTypeList,
 } from "../../services/productService";
 
 interface CustomRequest extends Request {
@@ -139,3 +141,22 @@ export const getProductsByPagination = [
     });
   },
 ];
+
+export const getCategoryType = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const userId = req.userId;
+  const user = await getUserById(userId!);
+  checkUserIfNotExist(user);
+
+  const categories = await getCategoryList();
+  const types = await getTypeList();
+
+  res.status(200).json({
+    message: "category & types",
+    categories,
+    types,
+  });
+};
