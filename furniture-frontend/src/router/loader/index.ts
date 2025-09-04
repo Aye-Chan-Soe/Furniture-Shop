@@ -2,6 +2,7 @@ import { authApi } from '@/api'
 import {
   categotyTypeQuery,
   onePostQuery,
+  oneProductQuery,
   postInfiniteQuery,
   postQuery,
   productInfiniteQuery,
@@ -82,4 +83,13 @@ export const productInfiniteLoader = async () => {
   await queryClient.ensureQueryData(categotyTypeQuery())
   await queryClient.prefetchInfiniteQuery(productInfiniteQuery())
   return null
+}
+
+export const productLoader = async ({ params }: LoaderFunctionArgs) => {
+  if (!params.productId) {
+    throw new Error('No Product ID provided')
+  }
+  await queryClient.ensureQueryData(productQuery('?limit=4'))
+  await queryClient.ensureQueryData(oneProductQuery(Number(params.productId)))
+  return { productId: params.productId }
 }

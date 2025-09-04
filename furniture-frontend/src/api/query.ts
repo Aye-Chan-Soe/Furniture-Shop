@@ -30,7 +30,7 @@ export const postQuery = (q?: string) => ({
   queryFn: () => fetchPosts(q),
 })
 
-// For Infinite Scroll
+// For Infinite Scroll Posts
 const fetchInfinitePosts = async ({ pageParam = null }) => {
   const query = pageParam ? `?limit=6&cursor=${pageParam}` : '?limit=6'
   const response = await api.get(`users/posts/infinite${query}`)
@@ -46,7 +46,8 @@ export const postInfiniteQuery = () => ({
   // maxPages: 6
 })
 
-export const fetchOnePost = async (id: number) => {
+// For Post Details
+const fetchOnePost = async (id: number) => {
   const post = await api.get(`users/posts/${id}`)
   if (!post) {
     throw new Response('', {
@@ -62,6 +63,7 @@ export const onePostQuery = (id: number) => ({
   queryFn: () => fetchOnePost(id),
 })
 
+// For Filter
 export const fetchCategoryType = async () => api.get('users/filter-type').then((res) => res.data)
 
 export const categotyTypeQuery = () => ({
@@ -98,4 +100,21 @@ export const productInfiniteQuery = (
   getNextPageParam: (lastPage, pages) => lastPage.nextCursor ?? undefined,
   // getPreviousPageParam: (firstPage, pages) => firstPage.prevCursor ?? undefined
   // maxPages: 6
+})
+
+// For Product Details
+const fetchOneProduct = async (id: number) => {
+  const product = await api.get(`users/products/${id}`)
+  if (!product) {
+    throw new Response('', {
+      status: 404,
+      statusText: 'Not Found',
+    })
+  }
+  return product.data
+}
+
+export const oneProductQuery = (id: number) => ({
+  queryKey: ['products', 'details', id],
+  queryFn: () => fetchOneProduct(id),
 })
