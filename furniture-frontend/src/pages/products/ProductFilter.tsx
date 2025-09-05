@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
+
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
@@ -28,15 +29,15 @@ interface ProductFilterProps {
 const FormSchema = z.object({
   categories: z.array(z.string()),
   // .refine((value) => value.some((item) => item), {
-  //   message: 'You have to select at least one category.',
+  //   message: "You have to select at least one categories.",
   // }),
   types: z.array(z.string()),
   // .refine((value) => value.some((item) => item), {
-  //   message: 'You have to select at least one type.',
+  //   message: "You have to select at least one types.",
   // }),
 })
 
-function ProductFilter({
+export default function ProductFilter({
   filterList,
   selectedCategory,
   selectedType,
@@ -51,7 +52,7 @@ function ProductFilter({
   })
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    //console.log('Selected items:', data.categories)
+    // console.log("Submit data .... ", data);
     onFilterChange(data.categories, data.types)
   }
 
@@ -140,6 +141,7 @@ function ProductFilter({
             </FormItem>
           )}
         />
+
         <Button type="submit" variant="outline">
           Filter
         </Button>
@@ -147,5 +149,3 @@ function ProductFilter({
     </Form>
   )
 }
-
-export default ProductFilter

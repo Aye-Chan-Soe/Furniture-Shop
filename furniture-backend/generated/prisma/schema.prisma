@@ -74,6 +74,7 @@ model Product {
   orders      ProductOnOrder[]
   images      Image[]
   tags        ProductTag[]
+  users       User[]
 }
 
 model ProductOnOrder {
@@ -136,6 +137,7 @@ model User {
   updatedAt       DateTime  @updatedAt
   orders          Order[]
   posts           Post[]
+  products        Product[]
 }
 
 model Image {

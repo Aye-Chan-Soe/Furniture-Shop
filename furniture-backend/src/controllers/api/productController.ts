@@ -13,6 +13,11 @@ import {
   getProductsList,
   getTypeList,
 } from "../../services/productService";
+import {
+  addProductToFavourite,
+  removeProductFromFavourite,
+} from "../../services/userService";
+import cacheQueue from "../../jobs/queues/cacheQueue";
 
 interface CustomRequest extends Request {
   userId?: any;
@@ -35,7 +40,7 @@ export const getProduct = [
     //const post = await getPostWithRelations(+postId);
     const cacheKey = `products:${JSON.stringify(productId)}`;
     const product = await getOrSetCache(cacheKey, async () => {
-      return await getProductWithRelations(+productId);
+      return await getProductWithRelations(+productId, user!.id);
     });
 
     checkModelIfExist(product);
@@ -160,3 +165,43 @@ export const getCategoryType = async (
     types,
   });
 };
+
+export const toggleFavourite = [
+  body("productId", "Product ID must not be empty.").isInt({ gt: 0 }),
+  body("favourite", "Favourite must not be empty.").isBoolean(),
+
+  async (req: CustomRequest, res: Response, next: NextFunction) => {
+    const errors = validationResult(req).array({ onlyFirstError: true });
+    if (errors.length > 0) {
+      return next(createError(errors[0].msg, 400, errorCode.invalid));
+    }
+
+    const userId = req.userId;
+    const user = await getUserById(userId!);
+    checkUserIfNotExist(user);
+
+    const { productId, favourite } = req.body;
+    if (favourite) {
+      await addProductToFavourite(user!.id, productId);
+    } else {
+      await removeProductFromFavourite(user!.id, productId);
+    }
+
+    await cacheQueue.add(
+      "invalidate-product-cache",
+      {
+        pattern: "products:*",
+      },
+      {
+        jobId: `invalidate-${Date.now()}`,
+        priority: 1,
+      }
+    );
+
+    res.status(200).json({
+      message: favourite
+        ? "Successfully added favourite"
+        : "Successfully removed favourite",
+    });
+  },
+];

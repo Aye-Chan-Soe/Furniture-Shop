@@ -1,16 +1,19 @@
+import React from 'react'
+import { useLoaderData, useNavigate } from 'react-router-dom'
+import { useSuspenseQuery } from '@tanstack/react-query'
+
 import { Button } from '@/components/ui/button'
 // import { products } from '@/data/products'
-import { Link, useLoaderData } from 'react-router-dom'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import ProductCard from '@/components/products/ProductCard'
 import { Icons } from '@/components/icons'
 import Autoplay from 'embla-carousel-autoplay'
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel'
-import React from 'react'
 import { Separator } from '@/components/ui/separator'
 import { formatPrice } from '@/lib/utils'
 import Rating from '@/components/products/Rating'
-import AddToFavourite from './AddToFavourite'
+// import AddToFavourite from './AddToFavourite'
+import AddToFavourite from './TanstackOptimistic'
 import AddToCartForm from '@/components/products/AddToCartForm'
 import {
   Accordion,
@@ -18,13 +21,13 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
-import { useSuspenseQuery } from '@tanstack/react-query'
 import { oneProductQuery, productQuery } from '@/api/query'
 import { Image, Product } from '@/types'
 
 function ProductDetail() {
   // const { productId } = useParams()
   //   const product = products.find((product) => product.id === productId)
+  const navigate = useNavigate()
   const { productId } = useLoaderData()
   const { data: productsData } = useSuspenseQuery(productQuery('?limit=4'))
   const { data: productDetail } = useSuspenseQuery(oneProductQuery(productId))
@@ -33,10 +36,11 @@ function ProductDetail() {
 
   return (
     <div className="container mx-auto px-4 lg:px-0">
-      <Button asChild variant="outline" className="mt-8">
-        <Link to="/products">
+      <Button variant="outline" className="mt-8" onClick={() => navigate(-1)}>
+        <Icons.arrowLeft /> All Products
+        {/* <Link to="/products">
           <Icons.arrowLeft /> All Products
-        </Link>
+        </Link> */}
       </Button>
       <section className="my-6 flex flex-col gap-16 md:flex-row md:gap-16">
         <Carousel
@@ -79,6 +83,7 @@ function ProductDetail() {
             <AddToFavourite
               productId={String(productDetail.product.id)}
               rating={Number(productDetail.product.rating)}
+              isFavourite={productDetail.product.users.length === 1}
             />
           </div>
           <AddToCartForm canBuy={productDetail.product.status === 'ACTIVE'} />
