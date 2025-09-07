@@ -1,5 +1,6 @@
-import { Button } from '@/components/ui/button'
 import { Link } from 'react-router-dom'
+
+import { Button } from '@/components/ui/button'
 import {
   Sheet,
   SheetClose,
@@ -11,41 +12,49 @@ import {
 } from '@/components/ui/sheet'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { cartItems } from '@/data/carts'
+// import { cartItems } from '@/data/carts'
 import { Icons } from '@/components/icons'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import CartItem from '@/components/carts/CartItem'
 import { formatPrice } from '@/lib/utils'
+import { useCartStore } from '@/store/cartStore'
 
 export default function CartSheet() {
-  const itemCount = 4
-  const totalAmount = 190
+  // const itemCount = 4
+  // const totalAmount = 190
+  const itemCount = useCartStore((state) => state.getTotalItems())
+  const totalAmount = useCartStore((state) => state.getTotalPrice())
+  const { carts } = useCartStore()
+
   return (
     <Sheet>
       <SheetTrigger asChild>
         <Button variant="outline" size="icon" className="relative" aria-label="Open Cart">
-          <Badge
-            variant="destructive"
-            className="absolute -top-2 -right-2 size-4 justify-center rounded-full p-2.5"
-          >
-            {itemCount}
-          </Badge>
+          {itemCount > 0 && (
+            <Badge
+              variant="destructive"
+              className="absolute -top-2 -right-2 size-4 justify-center rounded-full p-2.5"
+            >
+              {itemCount}
+            </Badge>
+          )}
+
           <Icons.cart className="size-4" aria-hidden="true" />
         </Button>
       </SheetTrigger>
       <SheetContent className="w-full md:max-w-lg">
         <SheetHeader>
-          <SheetTitle>Cart - {itemCount}</SheetTitle>
+          <SheetTitle>{itemCount > 0 ? `Cart - ${itemCount}` : 'Empty Cart'}</SheetTitle>
         </SheetHeader>
         <Separator className="my-2" />
 
-        {cartItems.length > 0 ? (
+        {carts.length > 0 ? (
           <>
             <ScrollArea className="my-4 h-[70vh] pb-8">
               <div className="flex-1">
                 {' '}
-                {cartItems.map((cart) => (
-                  <CartItem cart={cart} />
+                {carts.map((cart) => (
+                  <CartItem cart={cart} key={cart.id} />
                 ))}
               </div>
             </ScrollArea>
