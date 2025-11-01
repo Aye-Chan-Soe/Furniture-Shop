@@ -102,7 +102,7 @@ export default function LoginForm({ className, ...props }: React.ComponentProps<
                     )}
                   />
                   <span className="ml-auto">
-                    <Link to="#" className="text-sm underline-offset-2 hover:underline">
+                    <Link to="/reset" className="text-sm underline-offset-2 hover:underline">
                       Forgot your password?
                     </Link>
                   </span>

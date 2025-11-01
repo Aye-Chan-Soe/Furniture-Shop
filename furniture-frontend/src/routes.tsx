@@ -22,22 +22,30 @@ import {
   confirmLoader,
   homeLoader,
   loginLoader,
+  newPasswordLoader,
   otpLoader,
   postLoader,
   productInfiniteLoader,
   productLoader,
+  verifyLoader,
 } from '@/router/loader'
 import {
   confirmAction,
   // favouriteAction,
   loginAction,
   logoutAction,
+  newPasswordAction,
   otpAction,
   registerAction,
+  resetAction,
+  verifyAction,
 } from './router/action'
 import SignUpPage from './pages/auth/SignUp'
 import OtpPage from './pages/auth/Otp'
 import ConfirmPasswordPage from './pages/auth/ConfirmPassword'
+import ResetPasswordPage from './pages/auth/ResetPassword'
+import VerifyOtpPage from './pages/auth/VerifyOtp'
+import NewPasswordPage from './pages/auth/NewPassword'
 
 export const router = createBrowserRouter([
   {
@@ -131,4 +139,27 @@ export const router = createBrowserRouter([
     ],
   },
   { path: '/logout', action: logoutAction, loader: () => redirect('/') },
+  {
+    path: '/reset',
+    Component: AuthRootLayout,
+    children: [
+      {
+        index: true,
+        Component: ResetPasswordPage,
+        action: resetAction,
+      },
+      {
+        path: 'verify',
+        Component: VerifyOtpPage,
+        loader: verifyLoader,
+        action: verifyAction,
+      },
+      {
+        path: 'new-password',
+        Component: NewPasswordPage,
+        loader: newPasswordLoader,
+        action: newPasswordAction,
+      },
+    ],
+  },
 ])

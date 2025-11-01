@@ -145,3 +145,80 @@ export const favouriteAction = async ({ request, params }: ActionFunctionArgs) =
     } else throw error
   }
 }
+
+export const resetAction = async ({ request }: ActionFunctionArgs) => {
+  const authStore = useAuthStore.getState() // Global Usage
+  const formData = await request.formData()
+  const credentials = Object.fromEntries(formData)
+
+  try {
+    const response = await authApi.post('forget-password', credentials) // API call
+    if (response.status !== 200) {
+      return { error: response.data || 'Sending OTP Failed!' }
+    }
+
+    // Client State Management
+    // memory - context, redux, zustand
+    // persistent - localStorage, sessionStorage, cookie
+
+    authStore.setAuth(response.data.phone, response.data.token, Status.verify)
+
+    return redirect('/reset/verify')
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      return error.response?.data || { error: 'Sending OTP Failded!' }
+    } else throw error
+  }
+}
+
+export const verifyAction = async ({ request }: ActionFunctionArgs) => {
+  const authStore = useAuthStore.getState()
+  const formData = await request.formData()
+
+  const credentials = {
+    phone: authStore.phone,
+    otp: formData.get('otp'),
+    token: authStore.token,
+  }
+
+  try {
+    const response = await authApi.post('verify', credentials) // API call
+    if (response.status !== 200) {
+      return { error: response.data || 'Verifying OTP Failed!' }
+    }
+
+    authStore.setAuth(response.data.phone, response.data.token, Status.reset)
+
+    return redirect('/reset/new-password')
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      return error.response?.data || { error: 'Verifying OTP Failded!' }
+    } else throw error
+  }
+}
+
+export const newPasswordAction = async ({ request }: ActionFunctionArgs) => {
+  const authStore = useAuthStore.getState()
+  const formData = await request.formData()
+
+  const credentials = {
+    phone: authStore.phone,
+    password: formData.get('password'),
+    token: authStore.token,
+  }
+
+  try {
+    const response = await authApi.post('reset-password', credentials) // API call
+    if (response.status !== 200) {
+      // not 201
+      return { error: response.data || 'Reseting Failed!' }
+    }
+
+    authStore.clearAuth()
+    return redirect('/')
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      return error.response?.data || { error: 'Reseting Failded!' }
+    } else throw error
+  }
+}
