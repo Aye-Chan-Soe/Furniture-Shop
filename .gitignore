@@ -13,7 +13,9 @@ dist-ssr
 *.local
 .env
 
-/generated/prisma
+
+furniture-backend/generated/prisma
+furniture-backend/config
 
 # Editor directories and files
 .vscode/*

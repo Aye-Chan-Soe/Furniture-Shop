@@ -89,7 +89,7 @@ export default function Editable({ onDelete, onUpdate, quantity }: EditableProps
                     min={1}
                     max={9999}
                     {...field}
-                    className="h-8 w-16 rounded-none border-x-0 text-center"
+                    className="[appearance: textfield] h-8 w-16 rounded-none border-x-0 text-center [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                   />
                 </FormControl>
                 <FormMessage />

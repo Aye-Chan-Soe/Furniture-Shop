@@ -23,6 +23,7 @@ import {
 } from '@/components/ui/accordion'
 import { oneProductQuery, productQuery } from '@/api/query'
 import { Image, Product } from '@/types'
+import { useCartStore } from '@/store/cartStore'
 
 function ProductDetail() {
   // const { productId } = useParams()
@@ -33,6 +34,17 @@ function ProductDetail() {
   const { data: productDetail } = useSuspenseQuery(oneProductQuery(productId))
   const imgUrl = import.meta.env.VITE_IMG_URL
   const plugin = React.useRef(Autoplay({ delay: 3000, stopOnInteraction: true }))
+
+  const { addItem } = useCartStore()
+  const handleCart = (quantity: number) => {
+    addItem({
+      id: productDetail.product.id,
+      name: productDetail.product.name,
+      price: productDetail.product.price,
+      image: productDetail.product.images[0]?.path,
+      quantity,
+    })
+  }
 
   return (
     <div className="container mx-auto px-4 lg:px-0">
@@ -86,7 +98,11 @@ function ProductDetail() {
               isFavourite={productDetail.product.users.length === 1}
             />
           </div>
-          <AddToCartForm canBuy={productDetail.product.status === 'ACTIVE'} />
+          <AddToCartForm
+            canBuy={productDetail.product.status === 'ACTIVE'}
+            onHandleCart={handleCart}
+            idInCart={productDetail.product.id}
+          />
           <Separator className="my-5" />
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="item-1" className="border-none">
