@@ -96,7 +96,7 @@ export const productInfiniteQuery = (
     fetchInfiniteProducts({ pageParam, categories, types }),
   placeholderData: keepPreviousData,
   initialPageParam: null,
-  getNextPageParam: (lastPage: { nextCursor: any; posts: any[] }, _pages: any) =>
+  getNextPageParam: (lastPage: { nextCursor: any; products: any[] }, _pages: any) =>
     lastPage.nextCursor ?? undefined, // maxPages: 6
 })
 
