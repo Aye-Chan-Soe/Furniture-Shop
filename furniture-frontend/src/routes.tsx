@@ -30,6 +30,7 @@ import {
   verifyLoader,
 } from '@/router/loader'
 import {
+  changeNewPasswordAction,
   confirmAction,
   // favouriteAction,
   loginAction,
@@ -46,6 +47,7 @@ import ConfirmPasswordPage from './pages/auth/ConfirmPassword'
 import ResetPasswordPage from './pages/auth/ResetPassword'
 import VerifyOtpPage from './pages/auth/VerifyOtp'
 import NewPasswordPage from './pages/auth/NewPassword'
+import ChangePassword from './pages/auth/ChangePassword'
 
 export const router = createBrowserRouter([
   {
@@ -137,6 +139,11 @@ export const router = createBrowserRouter([
         action: confirmAction,
       },
     ],
+  },
+  {
+    path: '/change-password',
+    Component: ChangePassword,
+    action: changeNewPasswordAction,
   },
   { path: '/logout', action: logoutAction, loader: () => redirect('/') },
   {

@@ -222,3 +222,28 @@ export const newPasswordAction = async ({ request }: ActionFunctionArgs) => {
     } else throw error
   }
 }
+
+export const changeNewPasswordAction = async ({ request }: ActionFunctionArgs) => {
+  // const authStore = useAuthStore.getState()
+  const formData = await request.formData()
+
+  const credentials = {
+    oldPassword: formData.get('oldPassword'),
+    newPassword: formData.get('newPassword'),
+  }
+
+  try {
+    const response = await authApi.post('change-password', credentials) // API call
+    if (response.status === 200) {
+      return { message: 'Successfully changed your password. Please log in again.' }
+    }
+
+    // authStore.clearAuth()
+    // return redirect('/')
+    return { error: response.data || 'Action Failed!' }
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      return error.response?.data || { error: 'Action Failded!' }
+    } else throw error
+  }
+}

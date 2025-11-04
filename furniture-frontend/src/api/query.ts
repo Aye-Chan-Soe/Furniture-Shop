@@ -91,7 +91,7 @@ export const productInfiniteQuery = (
   categories: string | null = null,
   types: string | null = null,
 ) => ({
-  queryKey: ['product', 'infinite', categories ?? undefined, types ?? undefined],
+  queryKey: ['products', 'infinite', categories ?? undefined, types ?? undefined],
   queryFn: ({ pageParam }: { pageParam?: number | null }) =>
     fetchInfiniteProducts({ pageParam, categories, types }),
   placeholderData: keepPreviousData,

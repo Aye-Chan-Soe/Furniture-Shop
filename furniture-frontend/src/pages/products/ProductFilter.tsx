@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { useEffect } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -28,13 +29,7 @@ interface ProductFilterProps {
 
 const FormSchema = z.object({
   categories: z.array(z.string()),
-  // .refine((value) => value.some((item) => item), {
-  //   message: "You have to select at least one categories.",
-  // }),
   types: z.array(z.string()),
-  // .refine((value) => value.some((item) => item), {
-  //   message: "You have to select at least one types.",
-  // }),
 })
 
 export default function ProductFilter({
@@ -51,8 +46,14 @@ export default function ProductFilter({
     },
   })
 
+  useEffect(() => {
+    form.reset({
+      categories: selectedCategory,
+      types: selectedType,
+    })
+  }, [selectedCategory, selectedType, form])
+
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    // console.log("Submit data .... ", data);
     onFilterChange(data.categories, data.types)
   }
 
@@ -80,6 +81,7 @@ export default function ProductFilter({
                       >
                         <FormControl>
                           <Checkbox
+                            className="border-accent-foreground"
                             checked={field.value?.includes(item.id.toString())}
                             onCheckedChange={(checked) => {
                               return checked
@@ -121,6 +123,7 @@ export default function ProductFilter({
                       >
                         <FormControl>
                           <Checkbox
+                            className="border-accent-foreground"
                             checked={field.value?.includes(item.id.toString())}
                             onCheckedChange={(checked) => {
                               return checked
@@ -142,9 +145,14 @@ export default function ProductFilter({
           )}
         />
 
-        <Button type="submit" variant="outline">
-          Filter
-        </Button>
+        <div className="flex gap-4">
+          <Button type="submit" variant="default">
+            Filter
+          </Button>
+          <Button type="reset" variant="default">
+            Reset
+          </Button>
+        </div>
       </form>
     </Form>
   )

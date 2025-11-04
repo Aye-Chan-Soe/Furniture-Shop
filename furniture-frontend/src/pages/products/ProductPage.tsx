@@ -1,11 +1,13 @@
 import { useSearchParams } from 'react-router'
 import { useInfiniteQuery, useSuspenseQuery } from '@tanstack/react-query'
+import { useEffect } from 'react'
 
 // import { products, filterList } from "@/data/products";
 import ProductCard from '@/components/products/ProductCard'
 import ProductFilter from '@/pages/products/ProductFilter'
 // import Pagination from "@/components/products/Pagination";
-import { categoryTypeQuery, productInfiniteQuery, queryClient } from '@/api/query'
+import { categoryTypeQuery, productInfiniteQuery } from '@/api/query'
+//queryClient
 import { Button } from '@/components/ui/button'
 
 function Product() {
@@ -13,6 +15,23 @@ function Product() {
 
   const rawCategory = searchParams.get('categories')
   const rawType = searchParams.get('types')
+
+  // If no params, load from localStorage
+  useEffect(() => {
+    if (!rawCategory && !rawType) {
+      const savedCategories = localStorage.getItem('productFiltersCategory')
+      const savedTypes = localStorage.getItem('productFiltersType')
+
+      if (savedCategories || savedTypes) {
+        const newParams = new URLSearchParams()
+
+        if (savedCategories) newParams.set('categories', savedCategories)
+        if (savedTypes) newParams.set('types', savedTypes)
+
+        setSearchParams(newParams, { replace: true })
+      }
+    }
+  }, [rawCategory, rawType, setSearchParams])
 
   // Decode & parse search params
   const selectedCategory = rawCategory
@@ -31,6 +50,7 @@ function Product() {
         .map((type) => type.toString())
     : []
 
+  // cat and typ are passed to the query and used for the query key
   const cat = selectedCategory.length > 0 ? selectedCategory.join(',') : null
   const typ = selectedType.length > 0 ? selectedType.join(',') : null
 
@@ -46,23 +66,33 @@ function Product() {
     // fetchPreviousPage,
     hasNextPage,
     // hasPreviousPage,
-    refetch,
+    //refetch, // refetch is still available if needed manually elsewhere, but not in handler
   } = useInfiniteQuery(productInfiniteQuery(cat, typ))
 
   const allProducts = data?.pages.flatMap((page) => page.products) ?? []
 
   const handleFilterChange = (categories: string[], types: string[]) => {
     const newParams = new URLSearchParams()
-    if (categories.length > 0) newParams.set('categories', encodeURIComponent(categories.join(',')))
-    if (types.length > 0) newParams.set('types', encodeURIComponent(types.join(',')))
 
-    // Updates URL & triggers refetch via query key
+    const categoryString = categories.join(',')
+    const typeString = types.join(',')
+
+    // Save to localStorage
+    if (categories.length > 0) {
+      newParams.set('categories', encodeURIComponent(categoryString))
+      localStorage.setItem('productFiltersCategory', categoryString)
+    } else {
+      localStorage.removeItem('productFiltersCategory')
+    }
+
+    if (types.length > 0) {
+      newParams.set('types', encodeURIComponent(typeString))
+      localStorage.setItem('productFiltersType', typeString)
+    } else {
+      localStorage.removeItem('productFiltersType')
+    }
+
     setSearchParams(newParams)
-    // Cancel In-flight queries
-    queryClient.cancelQueries({ queryKey: ['products', 'infinite'] })
-    // Clear cache
-    queryClient.removeQueries({ queryKey: ['products', 'infinite'] })
-    refetch()
   }
 
   return status === 'pending' ? (

@@ -61,6 +61,14 @@ function AuthDropDown({ user }: userProps) {
           </DropdownMenuItem>
 
           <DropdownMenuItem asChild>
+            <Link to="/change-password">
+              <Icons.dashboard className="mr-0.5 size-4" aria-hidden="true" />
+              Change Password
+              <DropdownMenuShortcut>⌘P</DropdownMenuShortcut>
+            </Link>
+          </DropdownMenuItem>
+
+          <DropdownMenuItem asChild>
             <Link to="#">
               <Icons.gear className="mr-0.5 size-4" aria-hidden="true" />
               Setting

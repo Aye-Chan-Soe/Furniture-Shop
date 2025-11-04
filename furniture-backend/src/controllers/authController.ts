@@ -781,8 +781,98 @@ export const resetPassword = [
   },
 ];
 
+export const changePassword = [
+  // Validate and sanitize fields.
+  body("oldPassword", "Old Password must be 8 digits.")
+    .trim()
+    .notEmpty()
+    .matches("^[0-9]+$")
+    .isLength({ min: 8, max: 8 }),
+  body("newPassword", "New Password must be 8 digits.")
+    .trim()
+    .notEmpty()
+    .matches("^[0-9]+$")
+    .isLength({ min: 8, max: 8 }),
+  async (req: Request, res: Response, next: NextFunction) => {
+    const authReq = req as AuthenticatedRequest;
+    const errors = validationResult(req).array({ onlyFirstError: true });
+    // If validation error occurs
+    if (errors.length > 0) {
+      return next(createError(errors[0].msg, 400, errorCode.invalid));
+    }
+
+    const { oldPassword, newPassword } = req.body;
+
+    const userId = authReq.userId;
+
+    const user = await getUserById(userId);
+    checkUserIfNotExist(user);
+
+    const isMatch = await bcrypt.compare(oldPassword, user!.password);
+    if (!isMatch) {
+      return next(
+        createError("Incorrect old password.", 401, errorCode.unauthorised)
+      );
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashNewPassword = await bcrypt.hash(newPassword, salt);
+
+    // jwt token
+    const accessPayload = { id: user!.id };
+    const refreshPayload = { id: user!.id, phone: user!.phone };
+
+    const accessToken = jwt.sign(
+      accessPayload,
+      process.env.ACCESS_TOKEN_SECRET!,
+      {
+        expiresIn: 60 * 15, // 15 mins
+      }
+    );
+
+    const refreshToken = jwt.sign(
+      refreshPayload,
+      process.env.REFRESH_TOKEN_SECRET!,
+      {
+        expiresIn: "30d", // "30d" in production
+      }
+    );
+
+    const userUpdateData = {
+      password: hashNewPassword,
+      randomToken: refreshToken,
+    };
+    await updateUser(user!.id, userUpdateData);
+
+    res
+      .cookie("accessToken", accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "none",
+        maxAge: 15 * 60 * 1000, // 15 mins
+        path: "/",
+      })
+      .cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "none",
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        path: "/",
+      })
+      .status(200)
+      .json({
+        message: "Successfully change your password.",
+        userId: user!.id,
+      });
+  },
+];
+
 interface CustomRequest extends Request {
   userId?: number;
+}
+
+interface AuthenticatedRequest extends Request {
+  userId: number;
 }
 
 export const authCheck = async (
